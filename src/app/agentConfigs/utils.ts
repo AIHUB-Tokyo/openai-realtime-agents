@@ -17,18 +17,19 @@ export function injectTransferTools(agentDefs: AgentConfig[]): AgentConfig[] {
             `- ${dAgent.name}: ${dAgent.publicDescription ?? "No description"}`
         )
         .join("\n");
+      console.log(availableAgentsList);
 
       // Create the transfer_agent tool specific to this agent
       const transferAgentTool: Tool = {
         type: "function",
         name: "transferAgents",
-        description: `Triggers a transfer of the user to a more specialized agent. 
-  Calls escalate to a more specialized LLM agent or to a human agent, with additional context. 
-  Only call this function if one of the available agents is appropriate. Don't transfer to your own agent type.
+        description: `より専門的なエージェントへのユーザーの転送を開始します。
+  より専門的なLLMエージェントまたは人間のエージェントに、追加のコンテキストと共にエスカレーションします。
+  利用可能なエージェントの中から適切なものがある場合のみ、この機能を呼び出してください。自分自身のエージェントタイプには転送しないでください。
   
-  Let the user know you're about to transfer them before doing so.
+  転送する前に、ユーザーに転送することを知らせてください。
   
-  Available Agents:
+  利用可能なエージェント:
   ${availableAgentsList}
         `,
         parameters: {
@@ -36,17 +37,17 @@ export function injectTransferTools(agentDefs: AgentConfig[]): AgentConfig[] {
           properties: {
             rationale_for_transfer: {
               type: "string",
-              description: "The reasoning why this transfer is needed.",
+              description: "この転送が必要な理由を説明してください。",
             },
             conversation_context: {
               type: "string",
               description:
-                "Relevant context from the conversation that will help the recipient perform the correct action.",
+                "受信者が適切なアクションを実行するのに役立つ会話の関連コンテキスト。",
             },
             destination_agent: {
               type: "string",
               description:
-                "The more specialized destination_agent that should handle the user’s intended request.",
+                "ユーザーの要求を処理するべき、より専門的な転送先エージェント。",
               enum: downstreamAgents.map((dAgent) => dAgent.name),
             },
           },
